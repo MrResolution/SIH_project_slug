@@ -1,0 +1,71 @@
+{
+  "id": "S02",
+  "title": { "en": "Himalayan winter — deep pit below the road", "hi": "हिमालयी सर्दी — सड़क से नीचे गहरा गड्ढा" },
+  "summary": "A lined septic tank 38 m below the road at 2,200 m in mid-winter. The vacuum truck cannot lift it; the Probe-and-Mule must condition the cake with the pit's own supernatant and push it 148 m up the stepped lane.",
+  "scene": "E1",
+  "modes": ["training", "sandbox", "challenge", "demo"],
+  "startDate": "2026-10-19",
+  "startTime_h": 9.5,
+  "site": {
+    "name": "Upper Bhatta village, Mussoorie block",
+    "altitude_m": 2200,
+    "ambient": { "mean_c": -2, "amplitude_c": 6, "t0_h": 14 },
+    "wind_ms": 2.2,
+    "weather": "snow",
+    "surface": "packed_snow",
+    "gp": "SIR001",
+    "state": "UK"
+  },
+  "household": {
+    "qr": "HH-SIR001-00871",
+    "label": "HH-07",
+    "head": "Household 07",
+    "lat": 30.4592,
+    "lon": 78.0664
+  },
+  "containment": {
+    "type": "septic_tank",
+    "shape": "box",
+    "l_m": 2.0,
+    "w_m": 1.2,
+    "depth_m": 2.4,
+    "lined": true,
+    "groundwater_m": -3.0,
+    "hCrit_m": 12,
+    "beta_s": 2,
+    "fluidTemp_c": 8,
+    "lastEmptied_y": 7,
+    "layers": {
+      "scum": { "thickness_m": 0.15, "ts_pct": 14 },
+      "sup": { "thickness_m": 0.8, "ts_pct": 2 },
+      "bed": { "thickness_m": 0.9, "ts_top_pct": 12, "ts_bottom_pct": 21 }
+    },
+    "trash_recipe": "radford_modified",
+    "gas": { "h2s_gen": 1.0, "ch4_gen": 1.0, "o2_consumption": 1.0, "co_gen": 1.0, "dissolved_h2s_reservoir": 1.0 }
+  },
+  "equipment": {
+    "variant": "crawler",
+    "unit_id": "U-0042",
+    "operator_id": "OP-1189",
+    "fw": "1.0.3",
+    "hose_m": 150,
+    "battery_soc": 0.92
+  },
+  "facility": {
+    "qr": "FSTP-DDN-01",
+    "name": "Dehradun FSTP (co-treatment)",
+    "lat": 30.3165,
+    "lon": 78.0322,
+    "geofence_m": 250
+  },
+  "params": {},
+  "objectives": [
+    { "id": "empty", "type": "volume_removed_pct", "gte": 90, "label": "Remove ≥ 90% of the contents" },
+    { "id": "seed", "type": "seed_layer_respected", "label": "Leave the 25 mm seed layer" },
+    { "id": "water", "type": "fresh_water_used_l", "lte": 0, "label": "Use zero fresh water" },
+    { "id": "safe", "type": "no_critical_violation", "label": "No gas exposure, rollover or collapse" },
+    { "id": "time", "type": "job_time_min", "lte": 90, "optional": true, "label": "Finish within 90 min" }
+  ],
+  "events": [],
+  "failures_allowed": ["rollover", "collapse", "burst", "gas_exposure", "freeze"]
+}

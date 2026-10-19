@@ -51,8 +51,17 @@ The calculations in [04](docs/04-engineering-calculations.md) found issues in th
 ```
 ├── README.md            ← you are here
 ├── information.md/.txt  ← original research report
-└── docs/                ← engineering + simulation documentation
-    └── simulation/
+├── docs/                ← engineering + simulation documentation
+│   └── simulation/
+└── sim/                 ← Web3D digital twin (Vite + React Three Fiber, physics in a Web Worker)
 ```
 
-Planned additions are `sim/`, `firmware/`, `platform/`, `cad/`, `test-data/` and `test-reports/` (see [09 §4](docs/09-project-plan.md#4-repository-structure-target)).
+Planned additions are `firmware/`, `platform/`, `cad/`, `test-data/` and `test-reports/` (see [09 §4](docs/09-project-plan.md#4-repository-structure-target)).
+
+## Run the simulation
+
+The first slice runs scenario S02 (Himalayan winter, pit 38 m below the road) end to end, from driving the crawler down the lane to FSTP check-out. See [sim/README.md](sim/README.md) for what is built, how it is verified and where it deviates from the design.
+
+```bash
+cd sim && npm install && npm run dev
+```

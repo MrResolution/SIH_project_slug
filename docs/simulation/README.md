@@ -17,3 +17,7 @@ The simulation is a **browser-based, real-time 3D digital twin** of the Probe-an
 | 07 | [Implementation Plan and Testing](07-implementation-plan-and-testing.md) | Milestones, repo layout, performance budgets, testing, CI/CD |
 
 > **About the term "Web3D".** Here it means real-time interactive 3D on the web (WebGL2 / WebGPU, through Three.js). If formal **X3D (Web3D Consortium)** compliance is needed later, the glTF assets can be converted to X3D. The simulation core is renderer-independent (see 02).
+
+## Implementation status
+
+The first playable slice lives in [`/sim`](../../sim/README.md): the full physics core and controller, scenario S02 on scene E1 in Training and Sandbox modes, the instrument UI, P&ID, pendant and scored debrief, with 59 automated checks against the tables in [04](../04-engineering-calculations.md). Compare and Demo modes and the other scenarios are next.

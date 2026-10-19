@@ -1,0 +1,38 @@
+{
+  "name": "probe-and-mule-sim",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Web3D digital twin of the Probe-and-Mule mechanized desludging system (SIH PS 26258)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.2.5",
+    "@fontsource/jetbrains-mono": "5.2.5",
+    "@react-three/drei": "10.0.8",
+    "@react-three/fiber": "9.1.2",
+    "lucide-react": "0.511.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "three": "0.176.0",
+    "uplot": "1.6.32",
+    "zod": "3.24.4",
+    "zustand": "5.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.18",
+    "@types/react": "19.1.4",
+    "@types/react-dom": "19.1.5",
+    "@types/three": "0.176.0",
+    "@vitejs/plugin-react": "4.4.1",
+    "typescript": "5.8.3",
+    "vite": "6.3.5",
+    "vitest": "3.1.4"
+  }
+}
