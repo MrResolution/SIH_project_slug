@@ -28,6 +28,7 @@ export function App() {
   const set = useSim((s) => s.set);
 
   useEffect(() => {
+    if (import.meta.env.DEV) (window as unknown as { __sim: unknown }).__sim = { useSim, bridge, send };
     if (started) return;
     started = true;
     const u = readUrl();

@@ -110,8 +110,12 @@ button {
   display: grid;
   grid-template-rows: var(--top-h) minmax(0, 1fr) auto;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
 }
 .topbar {
   grid-column: 1 / -1;
@@ -1222,21 +1226,39 @@ input[type='range']::-moz-range-thumb {
    Bottom: P&ID + event log
    ========================================================================== */
 .bottom {
-  height: var(--bottom-h);
+  height: var(--bottom-h-dyn, var(--bottom-h));
+  max-height: calc(100vh - var(--top-h) - 40px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) 400px;
   border-top: 1px solid var(--line);
   background: var(--panel);
+  position: relative;
+  z-index: 10;
 }
 .bottom.collapsed {
-  height: 34px;
+  height: 34px !important;
+}
+.bottom-resizer {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  cursor: row-resize;
+  z-index: 30;
+  transition: background 0.15s ease;
+}
+.bottom-resizer:hover {
+  background: rgba(55, 208, 143, 0.4);
 }
 .pid-wrap {
   position: relative;
   min-width: 0;
+  height: 100%;
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 .panel-head {
   display: flex;
@@ -1252,6 +1274,9 @@ input[type='range']::-moz-range-thumb {
   flex: 1;
   min-height: 0;
   width: 100%;
+  height: 100%;
+  max-height: 100%;
+  display: block;
 }
 .pid-svg .sym {
   cursor: pointer;
@@ -1728,23 +1753,6 @@ input[type='range']::-moz-range-thumb {
   }
 }
 @media (max-width: 1000px) {
-  .app {
-    grid-template-columns: 0 minmax(0, 1fr) 0;
-  }
-  .left.side,
-  .right.side {
-    position: absolute;
-    top: var(--top-h);
-    bottom: 0;
-    z-index: 20;
-    box-shadow: var(--shadow);
-  }
-  .left.side {
-    left: 0;
-  }
-  .right.side {
-    right: 0;
-  }
   .bottom {
     grid-template-columns: 1fr;
   }
@@ -1886,6 +1894,18 @@ input[type='range']::-moz-range-thumb {
     --bottom-h: 196px;
   }
 }
+@media (max-height: 720px) {
+  :root {
+    --bottom-h: 175px;
+    --top-h: 48px;
+  }
+}
+@media (max-height: 620px) {
+  :root {
+    --bottom-h: 150px;
+    --top-h: 42px;
+  }
+}
 @container vp (max-width: 1100px) {
   .il-hud {
     top: 54px;
@@ -1970,9 +1990,13 @@ input[type='range']::-moz-range-thumb {
   .right.side {
     position: absolute;
     top: var(--top-h);
-    bottom: var(--bottom-h);
+    bottom: var(--bottom-h-dyn, var(--bottom-h));
     z-index: 20;
     box-shadow: var(--shadow);
+  }
+  .app:has(.bottom.collapsed) .left.side,
+  .app:has(.bottom.collapsed) .right.side {
+    bottom: 34px;
   }
   .left.side {
     left: 0;
