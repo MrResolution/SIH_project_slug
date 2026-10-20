@@ -33,6 +33,8 @@ In hill villages, toilets exist but the pits behind them cannot be emptied. Vacu
 | 07 | [Telemetry and Digital Platform](docs/07-telemetry-and-digital-platform.md) | Data model, MQTT messages, anti-dumping rules, backend |
 | 08 | [Test and Validation Plan](docs/08-test-and-validation-plan.md) | Simulant rig, Stage 0–6 tests, sim validation |
 | 09 | [Project Plan](docs/09-project-plan.md) | Workstreams, timeline, milestones, repo layout, risks |
+| 10 | [Rover and Mobility Architecture](docs/10-rover-and-mobility-architecture.md) | Subsystem layout, kinematics, powertrain, interlocks, 3D simulation architecture |
+| 11 | [Technical Q&A & Implementation Status](docs/11-technical-questions-and-implementation-status.md) | In-depth answers on thick sludge, steep terrain, anti-tipping, power/waste movement, and roadmap |
 | — | [Glossary](docs/glossary.md) | Terms and abbreviations |
 | 🎮 | [**Web3D Simulation Design**](docs/simulation/README.md) | 7 documents: requirements, architecture, physics, scenes, UI, scenarios, implementation |
 | 📄 | [Original research report](information.md) | Full source analysis this project is based on |

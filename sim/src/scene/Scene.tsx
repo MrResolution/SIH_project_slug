@@ -6,7 +6,7 @@ import { useSim } from '../store/simStore';
 import { SCENARIOS } from '../data/scenes';
 import { Environment } from './Environment';
 import { PitCutaway } from './PitCutaway';
-import { Crawler } from './Crawler';
+import { Rover } from './Rover';
 import { Hoses } from './Hoses';
 import { SiteProps } from './SiteProps';
 import { CameraRig } from './CameraRig';
@@ -55,7 +55,7 @@ export function Scene() {
       />
       <Environment snow={snow} />
       <PitCutaway />
-      <Crawler />
+      <Rover />
       <Hoses />
       <SiteProps snow={snow} />
       <Labels />

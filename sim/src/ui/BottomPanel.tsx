@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react';
 import type { SimEvent } from '../core';
 import { useSim } from '../store/simStore';
 import { Pid } from './Pid';
@@ -11,8 +11,69 @@ type Filter = 'all' | 'alarm' | 'warn' | 'ok';
 export function BottomPanel() {
   const open = useSim((s) => s.bottomOpen);
   const set = useSim((s) => s.set);
+  const [maximized, setMaximized] = useState(false);
+  const [customHeight, setCustomHeight] = useState<number | null>(null);
+  const isDragging = useRef(false);
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      const h = Math.max(140, Math.min(window.innerHeight - 100, window.innerHeight - e.clientY));
+      setCustomHeight(h);
+      setMaximized(false);
+    };
+    const onMouseUp = () => {
+      isDragging.current = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, []);
+
+  const startResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDragging.current = true;
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    if (!open) {
+      document.documentElement.style.setProperty('--bottom-h-dyn', '34px');
+    } else if (maximized) {
+      document.documentElement.style.setProperty('--bottom-h-dyn', 'min(450px, 55vh)');
+    } else if (customHeight) {
+      document.documentElement.style.setProperty('--bottom-h-dyn', `${customHeight}px`);
+    } else {
+      document.documentElement.style.removeProperty('--bottom-h-dyn');
+    }
+    return () => {
+      document.documentElement.style.removeProperty('--bottom-h-dyn');
+    };
+  }, [open, maximized, customHeight]);
+
+  const panelStyle = open
+    ? maximized
+      ? { height: 'min(450px, 55vh)' }
+      : customHeight
+      ? { height: `${customHeight}px` }
+      : undefined
+    : undefined;
+
   return (
-    <section className={`bottom ${open ? '' : 'collapsed'}`} aria-label="Process diagram and event log">
+    <section className={`bottom ${open ? '' : 'collapsed'}`} style={panelStyle} aria-label="Process diagram and event log">
+      {open && (
+        <div
+          className="bottom-resizer"
+          onMouseDown={startResize}
+          title="Drag up/down to resize bottom bar"
+        />
+      )}
       <div className="pid-wrap">
         <div className="panel-head">
           <div className="sec-title">
@@ -20,6 +81,16 @@ export function BottomPanel() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <PidLegend />
+            {open && (
+              <button
+                className="btn xs ghost icon"
+                onClick={() => setMaximized(!maximized)}
+                aria-label={maximized ? 'Restore height' : 'Maximize height'}
+                title={maximized ? 'Restore normal height' : 'Maximize bottom bar'}
+              >
+                {maximized ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+              </button>
+            )}
             <button className="btn xs ghost icon" onClick={() => set({ bottomOpen: !open })} aria-label={open ? 'Collapse' : 'Expand'} title="Toggle (P)">
               {open ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
             </button>

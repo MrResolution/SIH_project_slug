@@ -21,10 +21,10 @@ function Pipe({ d, q, ts, width = PIPE, dashed, color, warn }: { d: string; q: n
   );
 }
 
-function Bubble({ x, y, tag, value, tone = '', anchor = 'right' }: { x: number; y: number; tag: [string, string]; value?: string; tone?: '' | 'warn' | 'alarm' | 'ok'; anchor?: 'right' | 'left' | 'below' }) {
+function Bubble({ x, y, tag, value, tone = '', anchor = 'right' }: { x: number; y: number; tag: [string, string]; value?: string; tone?: '' | 'warn' | 'alarm' | 'ok'; anchor?: 'right' | 'left' | 'below' | 'above' }) {
   const stroke = tone === 'alarm' ? '#ff5a5f' : tone === 'warn' ? '#f3b343' : tone === 'ok' ? '#37d08f' : '#8a97aa';
   const vx = anchor === 'right' ? x + 17 : anchor === 'left' ? x - 17 : x;
-  const vy = anchor === 'below' ? y + 26 : y + 4;
+  const vy = anchor === 'below' ? y + 26 : anchor === 'above' ? y - 18 : y + 4;
   return (
     <g className={tone === 'alarm' ? 'blink' : undefined}>
       <circle cx={x} cy={y} r={13} fill="#10151d" stroke={stroke} strokeWidth={1.4} />
@@ -143,7 +143,7 @@ function PidSvg({ ui }: { ui: Snapshot }) {
   }
 
   return (
-    <svg className="pid-svg" viewBox="0 0 1100 196" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Live process and instrumentation diagram">
+    <svg className="pid-svg" viewBox="-50 -12 1165 218" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Live process and instrumentation diagram">
       <defs>
         <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <line x1="0" y1="0" x2="0" y2="6" stroke="#2a3443" strokeWidth="2" />
@@ -164,16 +164,16 @@ function PidSvg({ ui }: { ui: Snapshot }) {
         {!ui.equip.manholeOpen && <line x1={80} x2={110} y1={pitTop - 2} y2={pitTop - 2} stroke="#8a97aa" strokeWidth={3} />}
         {lanceIn && (
           <g>
-            <rect x={92} y={8} width={6} height={Math.max(0, tipY - 8)} fill="#aab4c0" />
+            <rect x={92} y={6} width={6} height={Math.max(0, tipY - 6)} fill="#aab4c0" />
             <path d={`M 88 ${tipY - 14} l 14 -4 M 88 ${tipY - 8} l 14 -4 M 88 ${tipY - 2} l 14 -4`} stroke={Math.abs(ui.probe.auger_rpm) > 20 ? '#4fc3ff' : '#6b7789'} strokeWidth={1.6} />
             {qJ > 1 && <path d={`M 92 ${tipY} l -12 6 M 98 ${tipY} l 12 6`} stroke="#8fd2e2" strokeWidth={1.6} markerEnd="url(#arr)" />}
           </g>
         )}
-        <Label x={95} y={190}>
+        <Label x={95} y={188}>
           Pit · {fmtInt(pit.volume_L)} L · {fmt(pit.removedPct, 0)} % out
         </Label>
       </Sym>
-      <Bubble x={52} y={18} tag={['GD', '01']} value={ui.equip.snifferPlaced ? `H₂S ${fmt(g.h2s_ppm, 0)} · O₂ ${fmt(g.o2_pct, 1)}` : 'not placed'} tone={gasTone as '' | 'ok' | 'alarm'} anchor="left" />
+      <Bubble x={45} y={18} tag={['GD', '01']} value={ui.equip.snifferPlaced ? `H₂S ${fmt(g.h2s_ppm, 0)} · O₂ ${fmt(g.o2_pct, 1)}` : 'not placed'} tone={gasTone as '' | 'ok' | 'alarm'} anchor="left" />
       <g opacity={ui.equip.blowerOn ? 1 : 0.4}>
         <circle cx={140} cy={18} r={10} fill="#10151d" stroke={ui.equip.blowerOn ? '#37d08f' : '#6b7789'} strokeWidth={1.4} />
         <path d="M 140 18 l 0 -7 M 140 18 l 6 4 M 140 18 l -6 4" stroke={ui.equip.blowerOn ? '#37d08f' : '#6b7789'} strokeWidth={1.4} />
@@ -182,14 +182,19 @@ function PidSvg({ ui }: { ui: Snapshot }) {
         </text>
         {ui.equip.blowerOn && <path d="M 130 22 Q 112 26 108 36" fill="none" stroke="#37d08f" strokeWidth={1.2} markerEnd="url(#arr)" />}
       </g>
-      {lanceIn && <Bubble x={60} y={Math.min(pitBot - 18, tipY - 6)} tag={['DT', '01']} value={`${fmt(ui.pit.depthGauge_m, 2)} m`} anchor="left" />}
+      {lanceIn && (
+        <g>
+          <line x1={23} x2={30} y1={100} y2={100} stroke="#8a97aa" strokeWidth={1} strokeDasharray="2 2" />
+          <Bubble x={10} y={100} tag={['DT', '01']} value={`${fmt(ui.pit.depthGauge_m, 2)} m`} anchor="below" />
+        </g>
+      )}
 
       {/* ---------------- Suction leg ---------------- */}
-      <Pipe d={`M 95 8 L 236 8 L 236 54`} q={qS} ts={tsP} warn={ui.suction.stalled} />
-      <Label x={165} y={22} dim>
+      <Pipe d={`M 95 6 L 236 6 L 236 54`} q={qS} ts={tsP} warn={ui.suction.stalled} />
+      <Label x={165} y={-1} dim>
         suction {fmt(qS, 0)} L/min{ui.suction.stalled ? ' · LIFT LIMIT' : ''}
       </Label>
-      <Pipe d={`M 288 30 L 288 26 L 104 26 L 104 ${Math.max(40, tipY - 20)}`} q={ui.probe.airCmd ? 1 : 0} ts={0} width={1.6} dashed color={ui.probe.airCmd ? '#9aa9ff' : '#3a4454'} />
+      <Pipe d={`M 288 26 L 104 26 L 104 ${Math.max(40, tipY - 20)}`} q={ui.probe.airCmd ? 1 : 0} ts={0} width={1.6} dashed color={ui.probe.airCmd ? '#9aa9ff' : '#3a4454'} />
 
       {/* ---------------- Surge cube + vane ---------------- */}
       <Sym cam="skid" label="Surge cube, vane pump and PCP (booster skid)">
@@ -197,7 +202,7 @@ function PidSvg({ ui }: { ui: Snapshot }) {
         <rect x={212} y={54 + 78 * (1 - cubeFrac) + 1} width={58} height={78 * cubeFrac} rx={5} fill={rgb(tsColor(tsC))} opacity={0.9} />
         <line x1={210} x2={216} y1={54 + 80 * (1 - 0.9)} y2={54 + 80 * (1 - 0.9)} stroke="#f3b343" />
         <line x1={210} x2={216} y1={54 + 80 * (1 - 6 / 90)} y2={54 + 80 * (1 - 6 / 90)} stroke="#ff5a5f" />
-        <Label x={241} y={148}>
+        <Label x={241} y={48}>
           Surge cube 90 L
         </Label>
         <circle cx={300} cy={30} r={13} fill="#10151d" stroke={ui.cube.vaneMode === 'off' ? '#6b7789' : '#4fc3ff'} strokeWidth={1.6} />
@@ -211,7 +216,8 @@ function PidSvg({ ui }: { ui: Snapshot }) {
           M-VAC {ui.cube.vaneMode === 'off' ? 'off' : ui.cube.vaneMode === 'vac' ? `vac ${fmt(ui.cube.vaneU * 100, 0)}%` : 'BLOW'}
         </text>
       </Sym>
-      <Bubble x={192} y={112} tag={['LT', '01']} value={`${fmt(ui.cube.level_L, 0)} L`} tone={ui.cube.floatTripped ? 'warn' : ''} anchor="left" />
+      <Bubble x={188} y={96} tag={['LT', '01']} value={`${fmt(ui.cube.level_L, 0)} L`} tone={ui.cube.floatTripped ? 'warn' : ''} anchor="below" />
+      <line x1={201} x2={210} y1={96} y2={96} stroke="#8a97aa" strokeWidth={1} strokeDasharray="2 2" />
       <Bubble x={300} y={76} tag={['PT', '01']} value={`${fmt(ui.cube.p_barg, 2)} bar(g)`} />
       <line x1={272} x2={287} y1={76} y2={76} stroke="#8a97aa" strokeWidth={1} strokeDasharray="2 2" />
 
@@ -227,23 +233,23 @@ function PidSvg({ ui }: { ui: Snapshot }) {
         <text x={456} y={162} fontSize={10} textAnchor="middle" fill="#cdd5df" fontWeight={700}>
           M
         </text>
-        <Label x={392} y={190}>
+        <Label x={384} y={134}>
           PCP · {fmt(ui.pcp.rpm, 0)} rpm · {fmt(ui.pcp.shaft_kW, 1)} kW
         </Label>
       </Sym>
-      <Bubble x={482} y={180} tag={['TT', '01']} value={`${fmt(ui.pcp.statorT_C, 0)} °C`} tone={ui.pcp.statorT_C >= 90 ? 'alarm' : ui.pcp.statorT_C >= 70 ? 'warn' : ''} />
+      <Bubble x={512} y={160} tag={['TT', '01']} value={`${fmt(ui.pcp.statorT_C, 0)} °C`} tone={ui.pcp.statorT_C >= 90 ? 'alarm' : ui.pcp.statorT_C >= 70 ? 'warn' : ''} anchor="right" />
 
       {/* discharge riser and tee */}
       <Pipe d={`M 430 144 L 430 98 L 664 98`} q={qP} ts={tsC} />
       {/* jet branch: tee → V-01 → PRV → back to the lance tip */}
-      <Pipe d={`M 470 98 L 470 128 L 470 184 L 178 184 L 178 150 L 101 ${tipY}`} q={lanceIn ? qJ : 0} ts={tsC} width={3} />
-      <Valve x={470} y={124} open={ui.probe.jetValve > 0.5} vertical />
-      <text x={482} y={127} fontSize={9} fill="#a7b1c0" fontWeight={700}>
+      <Pipe d={`M 474 98 L 474 186 L 168 186 L 168 16 L 98 16 L 98 ${tipY}`} q={lanceIn ? qJ : 0} ts={tsC} width={3} />
+      <Valve x={474} y={124} open={ui.probe.jetValve > 0.5} vertical />
+      <text x={486} y={127} fontSize={9} fill="#a7b1c0" fontWeight={700}>
         V-01 jets {fmt(qJ, 0)}
       </text>
       <g>
-        <rect x={300} y={176} width={30} height={16} rx={3} fill="#10151d" stroke="#8a97aa" />
-        <text x={315} y={187} fontSize={8} textAnchor="middle" fill="#a7b1c0" fontWeight={700}>
+        <rect x={340} y={178} width={32} height={16} rx={3} fill="#10151d" stroke="#8a97aa" />
+        <text x={356} y={189} fontSize={8} textAnchor="middle" fill="#a7b1c0" fontWeight={700}>
           PRV 6
         </text>
       </g>
