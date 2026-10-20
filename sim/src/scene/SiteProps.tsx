@@ -156,7 +156,7 @@ function Crew() {
     const atPit = s.vehicle.atPit;
     const targets = [
       atPit ? new THREE.Vector3(E1.operator.x, 0, E1.operator.z) : new THREE.Vector3(E1.tanker.x + 4.2, E1_ROAD_Y, E1.tanker.z + 2.6),
-      atPit ? (s.equip.crewTask || (s.equip.tripod > 0 && s.equip.tripod < 1) ? new THREE.Vector3(E1.pit.x + 0.55, 0, E1.pit.z + 0.85) : new THREE.Vector3(E1.pit.x + 2.4, 0, E1.pit.z - 1.6)) : new THREE.Vector3(E1.tanker.x + 5.4, E1_ROAD_Y, E1.tanker.z + 3.4),
+      atPit ? (s.equip.crewTask || (s.equip.tripod > 0 && s.equip.tripod < 1) ? new THREE.Vector3(E1.pit.x + 0.55, 0, E1.pit.z + 0.85) : new THREE.Vector3(E1.pit.x + 2.4, 0, E1.pit.z - 1.6)) : new THREE.Vector3(E1.tanker.x + 6.9, E1_ROAD_Y, E1.tanker.z + 1.2),
       atPit ? new THREE.Vector3(E1.park.x - 1.35, 0, E1.park.z - 1.9) : new THREE.Vector3(E1.tanker.x + 1.4, E1_ROAD_Y, E1.tanker.z + 2.8),
     ];
     // While the crawler descends, the third crew member walks beside it.

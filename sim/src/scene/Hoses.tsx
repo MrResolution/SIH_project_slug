@@ -6,6 +6,7 @@ import { useSim } from '../store/simStore';
 import { pColor, tsColor } from '../ui/colors';
 import { PolylineCurve, sagCurve } from './geom';
 import { LANCE_TOP } from './PitCutaway';
+import { ATTACH } from './crawler/layout';
 
 /**
  * Hose material: rubber when opaque; in X-ray the filled length shows the
@@ -81,11 +82,12 @@ function makeHoseMaterial(base: string, lengthM: number) {
   return { mat, tex, data };
 }
 
-/** Skid connection points in crawler-local coordinates. */
+/** Skid connection points in crawler-local coordinates (crawler/layout.ts). */
 const LOCAL = {
-  cubeInlet: new THREE.Vector3(-0.17, 0.75, -0.21),
-  jetTee: new THREE.Vector3(0.17, 0.62, 0.24),
-  controller: new THREE.Vector3(-0.2, 0.55, 0.23),
+  cubeInlet: ATTACH.cubeInlet,
+  suctionOut: ATTACH.suctionOut,
+  jetTee: ATTACH.jetTee,
+  controller: ATTACH.sniffer,
 };
 
 function parkWorld(v: THREE.Vector3) {
@@ -146,9 +148,12 @@ export function Hoses() {
       if (connected && Math.abs(lz - lastLance.current) > 0.01) {
         lastLance.current = lz;
         const top = new THREE.Vector3(E1.pit.x + 0.14, -s.pit.depth_m + lz + LANCE_TOP - 0.05, E1.pit.z);
+        // Sag from the lance to the deck edge, then straight over the PCP into the gooseneck's cam-lock.
         const inlet = parkWorld(LOCAL.cubeInlet);
+        const sag = sagCurve(top, parkWorld(LOCAL.suctionOut), 0, 0.4);
+        const run = new THREE.CatmullRomCurve3([...sag.points, inlet.clone().add(new THREE.Vector3(0.12, 0, 0)), inlet], false, 'centripetal');
         suctionMesh.current.geometry.dispose();
-        suctionMesh.current.geometry = new THREE.TubeGeometry(sagCurve(top, inlet, 0, 0.4), 60, 0.045, 8, false);
+        suctionMesh.current.geometry = new THREE.TubeGeometry(run, 80, 0.045, 8, false);
         if (jetMesh.current) {
           jetMesh.current.geometry.dispose();
           jetMesh.current.geometry = new THREE.TubeGeometry(sagCurve(top.clone().add(new THREE.Vector3(-0.08, 0, 0.06)), parkWorld(LOCAL.jetTee), 0, 0.5), 60, 0.016, 6, false);

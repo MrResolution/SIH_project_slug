@@ -3,6 +3,7 @@ import { E1, E1_HOSE_ROUTE, E1_ROAD_Y } from '../data/scenes/e1';
 import { useSim } from '../store/simStore';
 import { fmt, fmtInt } from '../ui/format';
 import { crawlerPose } from './Crawler';
+import { ATTACH } from './crawler/layout';
 
 /** Live engineering callouts pinned to components (8 Hz). */
 export function Labels() {
@@ -23,8 +24,8 @@ export function Labels() {
       )}
       {atPit && near && (
         <>
-          <Callout pos={[E1.park.x + 0.17, 1.35, E1.park.z - 0.1]} tag="PT-02 · PCP" value={`${fmt(ui.hose.pD_bar, 1)} bar · ${fmt(ui.pcp.rpm, 0)} rpm`} tone={pdTone} />
-          <Callout pos={[E1.park.x - 0.25, 1.25, E1.park.z - 0.45]} tag="LT-01 · CUBE" value={`${fmt(ui.cube.level_L, 0)} L · ${fmt(ui.cube.p_barg, 2)} bar(g)`} />
+          <Callout pos={[E1.park.x + ATTACH.pt02.x, ATTACH.pt02.y + 0.62, E1.park.z + ATTACH.pt02.z]} tag="PT-02 · PCP" value={`${fmt(ui.hose.pD_bar, 1)} bar · ${fmt(ui.pcp.rpm, 0)} rpm`} tone={pdTone} />
+          <Callout pos={[E1.park.x + ATTACH.cube.x, ATTACH.cube.y + 0.42, E1.park.z + ATTACH.cube.z]} tag="LT-01 · CUBE" value={`${fmt(ui.cube.level_L, 0)} L · ${fmt(ui.cube.p_barg, 2)} bar(g)`} />
         </>
       )}
       {atPit && ui.equip.snifferPlaced && (
